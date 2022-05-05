@@ -130,6 +130,13 @@ class model ():
             if phase != 'test':
                 if centroids and 'FeatureLoss' in self.criterions.keys():
                     self.centroids = self.criterions['FeatureLoss'].centroids.data
+                    ## expand/repeat centroids to fit multi-GPUS=torch.cuda.device_count(), which will change centroids shape [num_classes,feat_dim] => [GPUs*num_classes,feat_dim]
+                    ## when go into network foward, centroids shape will be [GPUs*num_classes,feat_dim] => [num_classes,feat_dim]
+                    self.centroids = self.centroids.unsqueeze(0).expand(torch.cuda.device_count(),
+                                                                        self.centroids.shape[0],
+                                                                        self.centroids.shape[1]).reshape(-1,torch.cuda.device_count() *
+                                                                                                         self.centroids.shape[0],
+                                                                                                         self.centroids.shape[1]).squeeze(0)
                 else:
                     self.centroids = None
 

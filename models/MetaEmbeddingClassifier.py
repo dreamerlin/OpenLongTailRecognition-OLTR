@@ -7,7 +7,7 @@ import pdb
 
 class MetaEmbedding_Classifier(nn.Module):
     
-    def __init__(self, feat_dim=2048, num_classes=1000):
+    def __init__(self, feat_dim=1024, num_classes=400):
         super(MetaEmbedding_Classifier, self).__init__()
         self.num_classes = num_classes
         self.fc_hallucinator = nn.Linear(feat_dim, num_classes)
@@ -50,7 +50,7 @@ class MetaEmbedding_Classifier(nn.Module):
 
         return logits, [direct_feature, infused_feature]
     
-def create_model(feat_dim=2048, num_classes=1000, stage1_weights=False, dataset=None, test=False, *args):
+def create_model(feat_dim=1024, num_classes=400, stage1_weights=False, dataset=None, test=False, *args):
     print('Loading Meta Embedding Classifier.')
     clf = MetaEmbedding_Classifier(feat_dim, num_classes)
 

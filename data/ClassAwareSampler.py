@@ -40,7 +40,12 @@ def class_aware_sample_generator (cls_iter, data_iter_list, n, num_samples_cls=1
             j = 0
     
         if j == 0:
-            temp_tuple = next(zip(*[data_iter_list[next(cls_iter)]]*num_samples_cls))
+            # temp_tuple = next(zip(*[data_iter_list[next(cls_iter)]]*num_samples_cls))
+
+            ##Fix dataloader hang when num_workers>0
+            tmp_cls_iter = cls_iter.next()
+            temp_tuple = [data_iter_list[tmp_cls_iter].next() for x in range(num_samples_cls)]
+
             yield temp_tuple[j]
         else:
             yield temp_tuple[j]

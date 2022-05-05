@@ -9,14 +9,28 @@ from utils import source_import
 # ================
 # LOAD CONFIGURATIONS
 
-data_root = {'ImageNet': '/home/public/public_dataset/ILSVRC2014/Img',
-             'Places': '/home/public/dataset/Places365'}
+data_root = {'Kinetics400': 'data/Kinetics400/'}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--config', default='./config/Imagenet_LT/Stage_1.py', type=str)
 parser.add_argument('--test', default=False, action='store_true')
 parser.add_argument('--test_open', default=False, action='store_true')
 parser.add_argument('--output_logits', default=False)
+
+parser.add_argument('--num-segments', type=int, default=8)
+parser.add_argument('--dense-sample', action='store_true')
+parser.add_argument('--test-crops', type=int, default=1)
+parser.add_argument('--num-clips', type=int, default=10)
+parser.add_argument('--test-batch-size', type=int, default=0)
+parser.add_argument('--use-softmax', action='store_true', default=False)
+parser.add_argument('--twice-sample', action='store_true')
+parser.add_argument('--dataset', type=str, default='Kinetics')
+parser.add_argument('--index-bias', type=int, default=0)
+parser.add_argument('--context-length', type=int, default=77)
+parser.add_argument('--io-backend', type=str, default='petrel')
+parser.add_argument('--input-size', type=int, default=224)
+parser.add_argument('--test', action='store_true', default=False)
+
 args = parser.parse_args()
 
 test_mode = args.test
@@ -46,7 +60,8 @@ if not test_mode:
     else:
         sampler_dic = None
 
-    data = {x: dataloader.load_data(data_root=data_root[dataset.rstrip('_LT')], dataset=dataset, phase=x, 
+    data = {x: dataloader.load_data(data_root=data_root[dataset.rstrip('_LT')], dataset=dataset,
+                                    phase=x,
                                     batch_size=training_opt['batch_size'],
                                     sampler_dic=sampler_dic,
                                     num_workers=training_opt['num_workers'])
